@@ -8,8 +8,6 @@ drive.mount('/content/drive')
 
 import pickle
 
-seed = 42
-
 # experiment
 iterations = 100
 
