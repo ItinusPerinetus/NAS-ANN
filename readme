@@ -1,0 +1,43 @@
+Variables' meaning in experiment.py:
+
+iterations:
+How many time to repeat experiment for each step of independence variable.
+
+seed:
+Randomizing pattern for synthesizing data.
+
+feature_number:
+How many function do data have as data is synthesized with rule-based approach.
+
+size_per_feature:
+How many sample do each function have.
+
+input_number:
+How many input neuron does architecture have.
+
+output_number:
+How many output neuron does architecture have.
+
+learning_rate:
+How much will biases be adjusted while learning.
+
+kernel_initializer:
+How will kernel value be initialized.
+
+bias_initializer:
+How will bias value be initialized.
+
+batch_size:
+How many sample will be train simultaneously
+
+epochs:
+How many time will model train.
+
+use_bias:
+Do we use bias for adjust weight.
+
+validate_ratio:
+How much ratio for validation data.
+
+test_ratio:
+How much ratio for test data.
