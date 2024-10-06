@@ -3,10 +3,13 @@ import math
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import backend as K
 import gc
+import os
 from google.colab import drive
 drive.mount('/content/drive')
 
 import pickle
+
+seed = 42
 
 # experiment
 iterations = 100
@@ -30,23 +33,32 @@ use_bias = True
 validate_ratio = 0.2
 test_ratio = 0.2
 
-input_number_range = range(1, 21) # 1 -> 20
+output_number_range = range(1, 3) # 1 -> 20
 
-label = 'input number'
+label = 'output number'
 
-for s in input_number_range:
+for s in output_number_range:
     print(s)
-    all_train_mse = []
-    all_val_mse = []
-    all_test_mse = []
     for i in range(iterations):
-        X_train, y_train = generate_data(s, output_number, feature_number, size_per_feature)
+        has_train = os.path.exists(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/train/mse{s}_{i}.pkl')
+        has_val = os.path.exists(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/val/mse{s}_{i}.pkl')
+        has_test = os.path.exists(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/test/mse{s}_{i}.pkl')
+        if (has_train and has_val and has_test):
+            print(f"{i + 1} / {iterations} (skipped)")
+            continue
+        if (has_train):
+            os.remove(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/train/mse{s}_{i}.pkl')
+        if (has_val):
+            os.remove(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/val/mse{s}_{i}.pkl')
+        if (has_test):
+            os.remove(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/test/mse{s}_{i}.pkl')
+        X_train, y_train = generate_data(output_number, s, feature_number, size_per_feature)
         X_temp, X_test, y_temp, y_test = train_test_split(X_train, y_train, test_size=test_ratio, random_state=seed)
         X_train_split, X_val, y_train_split, y_val = train_test_split(X_temp, y_temp, test_size=(validate_ratio / (1 - test_ratio)), random_state=seed)
         train_mse = []
         val_mse = []
         test_mse = []
-        model = create_model(s, output_number, learning_rate, kernel_initializer, bias_initializer)
+        model = create_model(output_number, s, learning_rate, kernel_initializer, bias_initializer)
         for epoch in range(epochs):
             history = model.fit(X_train_split, y_train_split, validation_data=(X_val, y_val), epochs=1, batch_size=batch_size, verbose=0)
             if (i == 0 and epoch == 0):
@@ -55,12 +67,25 @@ for s in input_number_range:
             val_mse.append(history.history['val_mean_squared_error'][0])
             test = model.evaluate(X_test, y_test, verbose=0)
             test_mse.append(test[1])
-        all_train_mse.append(train_mse)
-        all_val_mse.append(val_mse)
-        all_test_mse.append(test_mse)
+        train_mse.append(train_mse)
+        val_mse.append(val_mse)
+        test_mse.append(test_mse)
+        with open(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/train/mse{s}_{i}.pkl', 'wb') as f:
+            pickle.dump(train_mse, f)
+        with open(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/val/mse{s}_{i}.pkl', 'wb') as f:
+            pickle.dump(val_mse, f)
+        with open(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/test/mse{s}_{i}.pkl', 'wb') as f:
+            pickle.dump(test_mse, f)
         print(f"{i + 1} / {iterations}")
         K.clear_session()
         gc.collect()
+    all_train_mse = []
+    all_val_mse = []
+    all_test_mse = []
+    for i in range(iterations):
+        all_train_mse.append(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/train/mse{s}_{i}.pkl')
+        all_val_mse.append(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/val/mse{s}_{i}.pkl')
+        all_test_mse.append(f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/sub/test/mse{s}_{i}.pkl')
     all_train_mse = np.array(all_train_mse)
     mean_train_mse = np.mean(all_train_mse, axis=0)
     all_val_mse = np.array(all_val_mse)
