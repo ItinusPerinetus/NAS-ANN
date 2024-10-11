@@ -1,7 +1,7 @@
 import numpy as np
 import math
 
-def generate_data(input_number, output_number, feature_number, size_per_feature):
+def generate_data(seed = 42, input_number = 10, output_number = 10, feature_number = 10, size_per_feature = 20):
     np.random.seed(seed)
     X_classes = []
     y_classes = []
