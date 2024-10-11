@@ -9,22 +9,11 @@ drive.mount('/content/drive')
 
 import pickle
 
-seed = 42
-
 # experiment
 iterations = 100
 
 # data
 seed = 42
-feature_number = 10
-size_per_feature = 20
-
-# architecture
-input_number = 10
-output_number = 10
-learning_rate = 0.001
-kernel_initializer = 'glorot_uniform'
-bias_initializer = 'zeros'
 
 # training
 batch_size = 10
@@ -33,10 +22,10 @@ use_bias = True
 validate_ratio = 0.2
 test_ratio = 0.2
 
-output_number_range = range(1, 21)  # 1 -> 20
-label = 'output number'
+neuron_number_range = range(1, 21)
+label = 'neuron number at intermediate layer'
 
-for s in output_number_range:
+for s in neuron_number_range:
     super_train_file = f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/train/mse{s}.pkl'
     super_val_file = f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/val/mse{s}.pkl'
     super_test_file = f'/content/drive/MyDrive/Colab_Datasets/XAI/{label}/test/mse{s}.pkl'
@@ -52,13 +41,13 @@ for s in output_number_range:
         if os.path.exists(train_file) and os.path.exists(val_file) and os.path.exists(test_file):
             print(f"{i + 1} / {iterations} (skipped)")
             continue
-        X_train, y_train = generate_data(input_number, s, feature_number, size_per_feature)
+        X_train, y_train = generate_data()
         X_temp, X_test, y_temp, y_test = train_test_split(X_train, y_train, test_size=test_ratio, random_state=seed)
         X_train_split, X_val, y_train_split, y_val = train_test_split(X_temp, y_temp, test_size=(validate_ratio / (1 - test_ratio)), random_state=seed)
         train_mse = []
         val_mse = []
         test_mse = []
-        model = create_model(input_number, s, learning_rate, kernel_initializer, bias_initializer)
+        model = create_model(neurons = 1)
         for epoch in range(epochs):
             history = model.fit(X_train_split, y_train_split, validation_data=(X_val, y_val), epochs=1, batch_size=batch_size, verbose=0)
             train_mse.append(history.history['mean_squared_error'][0])
