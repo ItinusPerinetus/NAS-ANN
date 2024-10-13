@@ -14,6 +14,7 @@ where:
 $$
 \text{loss}(E, fn) = 0.1968
 $$
+
 $$
 c = \text{loss}(E, fn) - e^{-\alpha \cdot (E + b)}
 $$
