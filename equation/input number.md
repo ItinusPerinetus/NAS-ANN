@@ -1,7 +1,7 @@
 ## Rapid Reduction Loss Equation from Input Number:
 
 $$
-\text{loss}(ep, fn) = e^{-\alpha \cdot (ep + b)} + c \quad \text{where} \quad ep \leq E
+\text{loss}(ep, on) = e^{-\alpha \cdot (ep + b)} + c \quad \text{where} \quad ep \leq E
 $$
 
 where:
