@@ -10,5 +10,5 @@ where:
 - $\alpha = 0.0167 \cdot fn + 0.0098$
 - $b = 34.3415 \cdot e^{-0.3066 \cdot fn}$
 - $E = 111.2616 \cdot e^{-0.1605 \cdot fn}$
-- $\text{loss}(E, fn) = 0.1968$
+- $\text{loss}(E, fn) = 0.0014 \cdot fn + 0.1402$
 - $c = \text{loss}(E, fn) - e^{-\alpha \cdot (E + b)}$
